@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🪺 든든 황금거위 연금 수령 시뮬레이터</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Google Fonts: Pretendard / Noto Sans KR -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 45%, #ecfdf5 100%);
+      min-height: 100vh;
+    }
+    /* Custom Range Slider */
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      height: 8px;
+      border-radius: 999px;
+      background: #fde68a;
+      outline: none;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: #f59e0b;
+      border: 3px solid #ffffff;
+      box-shadow: 0 2px 6px rgba(245, 158, 11, 0.45);
+      cursor: pointer;
+      transition: transform 0.15s ease, background-color 0.15s ease;
+    }
+    input[type="range"]::-webkit-slider-thumb:hover {
+      transform: scale(1.15);
+      background: #d97706;
+    }
+    /* Floating Animation for Cute Goose */
+    @keyframes floatSlow {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-6px) rotate(1.5deg); }
+    }
+    .goose-float {
+      animation: floatSlow 3.5s ease-in-out infinite;
+    }
+    @keyframes pulseGold {
+      0%, 100% { filter: drop-shadow(0 0 6px rgba(245, 158, 11, 0.4)); }
+      50% { filter: drop-shadow(0 0 14px rgba(245, 158, 11, 0.85)); }
+    }
+    .egg-glow {
+      animation: pulseGold 2.5s ease-in-out infinite;
+    }
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #fef3c7;
+      border-radius: 8px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #fbbf24;
+      border-radius: 8px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #f59e0b;
+    }
+  </style>
+</head>
+<body class="text-slate-800 pb-14">
+
+  <!-- Top Header Banner -->
+  <header class="max-w-7xl mx-auto px-4 pt-6 pb-4">
+    <div class="bg-white/90 backdrop-blur-md border-2 border-amber-200 rounded-3xl p-5 sm:p-6 shadow-xl flex flex-col md:flex-row items-center justify-between gap-6">
+      <div class="flex flex-col sm:flex-row items-center gap-5 text-center sm:text-left">
+        <!-- Cute Custom SVG: Golden Goose & Golden Egg Nest -->
+        <div class="relative w-24 h-24 sm:w-28 sm:h-28 flex-shrink-0 goose-float">
+          <svg viewBox="0 0 140 140" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+            <!-- Soft Background Halo -->
+            <circle cx="70" cy="72" r="58" fill="#FEF3C7" stroke="#FDE68A" stroke-width="3"/>
+            <!-- Straw Nest -->
+            <ellipse cx="70" cy="108" rx="48" ry="15" fill="#D97706"/>
+            <ellipse cx="70" cy="105" rx="44" ry="11" fill="#F59E0B"/>
+            <path d="M30 105 Q50 115 70 105 Q90 115 110 105" stroke="#92400E" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+            <!-- Golden Eggs in Nest -->
+            <ellipse cx="48" cy="96" rx="11" ry="14" transform="rotate(-15 48 96)" fill="url(#goldGrad)" class="egg-glow"/>
+            <ellipse cx="94" cy="96" rx="11" ry="14" transform="rotate(18 94 96)" fill="url(#goldGrad)" class="egg-glow"/>
+            <!-- Cute White Goose Body -->
+            <ellipse cx="70" cy="86" rx="28" ry="22" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="2"/>
+            <!-- Goose Wing -->
+            <path d="M54 82 Q70 72 86 86 Q72 98 54 88 Z" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="2"/>
+            <!-- Goose Neck & Head -->
+            <path d="M62 72 Q58 50 66 38 Q75 30 82 40 Q84 54 78 72 Z" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="2"/>
+            <circle cx="73" cy="39" r="14" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="2"/>
+            <!-- Cute Crown on Goose -->
+            <path d="M63 27 L66 17 L73 23 L80 17 L83 27 Z" fill="#FBBF24" stroke="#D97706" stroke-width="1.5" stroke-linejoin="round"/>
+            <circle cx="73" cy="16" r="2.2" fill="#EF4444"/>
+            <!-- Goose Eye & Blush -->
+            <circle cx="77" cy="37" r="2.8" fill="#1E293B"/>
+            <circle cx="78" cy="36" r="1" fill="#FFFFFF"/>
+            <ellipse cx="72" cy="42" rx="3.5" ry="2" fill="#FDA4AF" opacity="0.75"/>
+            <!-- Orange Beak -->
+            <path d="M85 36 Q98 38 95 43 Q88 45 84 42 Z" fill="#F97316" stroke="#EA580C" stroke-width="1.2"/>
+            <!-- Center Big Golden Egg -->
+            <ellipse cx="70" cy="102" rx="12" ry="15" fill="url(#goldGrad)" stroke="#B45309" stroke-width="1.5" class="egg-glow"/>
+            <text x="70" y="106" text-anchor="middle" font-size="11" font-weight="900" fill="#78350F">₩</text>
+            <!-- Sparkles -->
+            <path d="M26 42 L29 48 L35 51 L29 54 L26 60 L23 54 L17 51 L23 48 Z" fill="#FBBF24"/>
+            <path d="M114 34 L116 39 L121 41 L116 43 L114 48 L112 43 L107 41 L112 39 Z" fill="#FBBF24"/>
+            <defs>
+              <linearGradient id="goldGrad" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#FEF08A"/>
+                <stop offset="45%" stop-color="#FACC15"/>
+                <stop offset="100%" stop-color="#D97706"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+
+        <div>
+          <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-100 text-amber-800 text-xs font-bold mb-2 border border-amber-300">
+            <span>🪺 누구나 쉽게 쓰는 스마트 은퇴 설계 도구</span>
+          </div>
+          <h1 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight flex flex-wrap items-center justify-center sm:justify-start gap-2">
+            <span>든든 황금거위 연금 수령 시뮬레이터</span>
+            <span class="text-xl sm:text-2xl">🦢✨</span>
+          </h1>
+          <p class="text-sm text-slate-600 mt-1">
+            연금 개시 연령·시작 자산·월 수령액·수익률과 <strong>주기별 연금액 증액(N년마다 M% 인상)</strong>까지 자유롭게 설정해 보세요!
+          </p>
+        </div>
+      </div>
+
+      <!-- Top Action Buttons -->
+      <div class="flex flex-wrap items-center justify-center gap-2.5 w-full md:w-auto">
+        <button onclick="applyPreset('balanced')" class="px-4 py-2.5 rounded-2xl bg-amber-100 hover:bg-amber-200 text-amber-900 font-bold text-xs sm:text-sm border border-amber-300 transition flex items-center gap-1.5 shadow-sm">
+          <span>🔄 초기값 리셋</span>
+        </button>
+        <button onclick="downloadCSV()" class="px-4 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs sm:text-sm shadow-md hover:shadow-lg transition flex items-center gap-1.5">
+          <span>📥 결과 표(CSV) 저장</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Grid -->
+  <main class="max-w-7xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+    <!-- LEFT PANEL: 6 Core Inputs (5 cols on lg) -->
+    <section class="lg:col-span-5 bg-white/95 backdrop-blur rounded-3xl border-2 border-amber-200/80 shadow-xl p-5 sm:p-6 space-y-5">
+      <div class="flex items-center justify-between border-b border-amber-100 pb-3">
+        <div class="flex items-center gap-2">
+          <span class="text-2xl">🎛️</span>
+          <h2 class="text-lg font-extrabold text-slate-800">연금 설계 6대 핵심 조건</h2>
+        </div>
+        <span class="text-xs font-bold text-amber-700 bg-amber-50 px-2.5 py-1 rounded-xl border border-amber-200">
+          실시간 자동 반영
+        </span>
+      </div>
+
+      <!-- Quick Scenario Presets -->
+      <div class="space-y-2">
+        <span class="text-xs font-bold text-slate-500 block">⚡ 빠른 시나리오 프리셋</span>
+        <div class="grid grid-cols-3 gap-2">
+          <button type="button" onclick="applyPreset('safe')" class="py-2 px-2 rounded-2xl bg-emerald-50 hover:bg-emerald-100 text-emerald-900 font-bold text-xs border border-emerald-200 transition flex items-center justify-center gap-1">
+            <span>🐢 안전형 (4% 룰)</span>
+          </button>
+          <button type="button" onclick="applyPreset('balanced')" class="py-2 px-2 rounded-2xl bg-amber-50 hover:bg-amber-100 text-amber-900 font-bold text-xs border border-amber-200 transition flex items-center justify-center gap-1">
+            <span>🦢 균형형 (기본)</span>
+          </button>
+          <button type="button" onclick="applyPreset('active')" class="py-2 px-2 rounded-2xl bg-orange-50 hover:bg-orange-100 text-orange-900 font-bold text-xs border border-orange-200 transition flex items-center justify-center gap-1">
+            <span>🦅 적극 인출형</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 1. 연금 개시 연령 -->
+      <div class="bg-amber-50/60 rounded-2xl p-4 border border-amber-200/70 space-y-2">
+        <div class="flex justify-between items-center">
+          <label for="startAgeInput" class="text-sm font-bold text-slate-800 flex items-center gap-1.5">
+            <span class="text-lg">🎂</span> 1. 연금 개시 연령
+          </label>
+          <div class="flex items-center gap-1">
+            <input id="startAgeInput" type="number" min="40" max="90" value="60"
+              class="w-20 text-right font-extrabold text-base text-amber-900 bg-white border border-amber-300 rounded-xl px-2.5 py-1 focus:outline-none focus:ring-2 focus:ring-amber-400">
+            <span class="text-sm font-bold text-slate-600">세</span>
+          </div>
+        </div>
+        <input id="startAgeSlider" type="range" min="45" max="85" step="1" value="60" class="w-full">
+        <div class="flex justify-between text-[11px] text-slate-400 font-medium">
+          <span>45세 (조기은퇴)</span>
+          <span>60세 (기본)</span>
+          <span>85세</span>
+        </div>
+      </div>
+
+      <!-- 2. 연금 시작시 계좌 금액 -->
+      <div class="bg-amber-50/60 rounded-2xl p-4 border border-amber-200/70 space-y-2.5">
+        <div class="flex justify-between items-center">
+          <label for="initialBalanceInput" class="text-sm font-bold text-slate-800 flex items-center gap-1.5">
+            <span class="text-lg">💰</span> 2. 연금 시작 시 계좌 금액
+          </label>
+          <div class="flex items-center gap-1">
+            <input id="initialBalanceInput" type="number" min="1000" max="500000" step="500" value="30000"
+              class="w-28 text-right font-extrabold text-base text-amber-900 bg-white border border-amber-300 rounded-xl px-2.5 py-1 focus:outline-none focus:ring-2 focus:ring-amber-400">
+            <span class="text-sm font-bold text-slate-600">만원</span>
+          </div>
+        </div>
+        <div class="flex items-center justify-between text-xs">
+          <span class="text-slate-500">환산 금액:</span>
+          <span id="initialBalanceKorean" class="font-extrabold text-amber-700 text-sm">3억 원 (300,000,000원)</span>
+        </div>
+        <input id="initialBalanceSlider" type="range" min="3000" max="100000" step="500" value="30000" class="w-full">
+        <!-- Quick Amount Chips -->
+        <div class="grid grid-cols-5 gap-1.5 pt-1">
+          <button type="button" onclick="setBalanceQuick(10000)" class="py-1.5 text-xs font-bold rounded-xl bg-white hover:bg-amber-100 text-slate-700 border border-amber-200 transition">1억</button>
+          <button type="button" onclick="setBalanceQuick(20000)" class="py-1.5 text-xs font-bold rounded-xl bg-white hover:bg-amber-100 text-slate-700 border border-amber-200 transition">2억</button>
+          <button type="button" onclick="setBalanceQuick(30000)" class="py-1.5 text-xs font-bold rounded-xl bg-amber-200/80 hover:bg-amber-300 text-amber-900 border border-amber-300 transition">3억</button>
+          <button type="button" onclick="setBalanceQuick(50000)" class="py-1.5 text-xs font-bold rounded-xl bg-white hover:bg-amber-100 text-slate-700 border border-amber-200 transition">5억</button>
+          <button type="button" onclick="setBalanceQuick(100000)" class="py-1.5 text-xs font-bold rounded-xl bg-white hover:bg-amber-100 text-slate-700 border border-amber-200 transition">10억</button>
+        </div>
+      </div>
+
+      <!-- 3. 첫해 월 수령액 (혹은 계좌금액 대비 비율) -->
+      <div class="bg-emerald-50/70 rounded-2xl p-4 border border-emerald-200 space-y-3">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <label class="text-sm font-bold text-slate-800 flex items-center gap-1.5">
+            <span class="text-lg">💵</span> 3. 첫해 연금 수령액 설정
+          </label>
+          <!-- Toggle Mode: 금액 vs 비율 -->
+          <div class="inline-flex rounded-xl bg-white p-0.5 border border-emerald-300 text-xs font-bold">
+            <button type="button" id="modeAmountBtn" onclick="setWithdrawalMode('amount')"
+              class="px-2.5 py-1 rounded-lg bg-emerald-600 text-white transition">
+              월 수령액(만원)
+            </button>
+            <button type="button" id="modeRateBtn" onclick="setWithdrawalMode('rate')"
+              class="px-2.5 py-1 rounded-lg text-slate-600 hover:text-emerald-800 transition">
+              연 인출비율(%)
+            </button>
+          </div>
+        </div>
+
+        <!-- Mode A: 월 수령액 (만원) 입력 -->
+        <div id="withdrawalAmountBox" class="space-y-2">
+          <div class="flex justify-between items-center">
+            <span class="text-xs font-semibold text-slate-600">첫해 매달 받을 연금</span>
+            <div class="flex items-center gap-1">
+              <input id="monthlyWithdrawalInput" type="number" min="10" max="5000" step="1" value="125"
+                class="w-24 text-right font-extrabold text-base text-emerald-900 bg-white border border-emerald-300 rounded-xl px-2.5 py-1 focus:outline-none focus:ring-2 focus:ring-emerald-400">
+              <span class="text-sm font-bold text-slate-600">만원/월</span>
+            </div>
+          </div>
+          <input id="monthlyWithdrawalSlider" type="range" min="20" max="500" step="1" value="125" class="w-full">
+        </div>
+
+        <!-- Mode B: 계좌금액 대비 연 인출 비율 (%) 입력 -->
+        <div id="withdrawalRateBox" class="space-y-2 hidden">
+          <div class="flex justify-between items-center">
+            <span class="text-xs font-semibold text-slate-600">시작 계좌 대비 연간 인출률</span>
+            <div class="flex items-center gap-1">
+              <input id="annualWithdrawalRateInput" type="number" min="0.5" max="30" step="0.1" value="5.0"
+                class="w-24 text-right font-extrabold text-base text-emerald-900 bg-white border border-emerald-300 rounded-xl px-2.5 py-1 focus:outline-none focus:ring-2 focus:ring-emerald-400">
+              <span class="text-sm font-bold text-slate-600">% /년</span>
+            </div>
+          </div>
+          <input id="annualWithdrawalRateSlider" type="range" min="1" max="15" step="0.1" value="5.0" class="w-full">
+        </div>
+
+        <!-- Real-time Cross Info Box -->
+        <div class="bg-white/90 rounded-xl p-2.5 border border-emerald-200/80 text-xs flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <span class="text-slate-500">첫해 연간 수령액:</span>
+            <strong id="firstYearAnnualText" class="text-emerald-800 ml-1">1,500만원</strong>
+          </div>
+          <div>
+            <span class="text-slate-500">원금 대비 비율:</span>
+            <strong id="firstYearRateText" class="text-emerald-700 ml-1">연 5.00% (월 0.42%)</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. 계좌 연 수익률 (%) -->
+      <div class="bg-amber-50/60 rounded-2xl p-4 border border-amber-200/70 space-y-2">
+        <div class="flex justify-between items-center">
+          <label for="annualReturnInput" class="text-sm font-bold text-slate-800 flex items-center gap-1.5">
+            <span class="text-lg">📈</span> 4. 계좌 연 수익률 (%)
+          </label>
+          <div class="flex items-center gap-1">
+            <input id="annualReturnInput" type="number" min="0" max="30" step="0.1" value="5.0"
+              class="w-20 text-right font-extrabold text-base text-amber-900 bg-white border border-amber-300 rounded-xl px-2.5 py-1 focus:outline-none focus:ring-2 focus:ring-amber-400">
+            <span class="text-sm font-bold text-slate-600">%</span>
+          </div>
+        </div>
+        <input id="annualReturnSlider" type="range" min="0" max="15" step="0.1" value="5.0" class="w-full">
+        <div class="flex justify-between text-[11px] text-slate-400 font-medium">
+          <span>0% (무수익 보관)</span>
+          <span>5.0% (안정배당/채권)</span>
+          <span>10%+ (적극투자)</span>
+        </div>
+      </div>
+
+      <!-- 5 & 6. 주기적 연금액 증액 설정 -->
+      <div class="bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 rounded-2xl p-4 border-2 border-orange-300 shadow-sm space-y-3.5 relative overflow-hidden">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-1.5">
+            <span class="text-xl">🚀</span>
+            <h3 class="text-sm font-black text-orange-900">물가상승 방어! 주기별 연금액 증액 설정</h3>
+          </div>
+          <span class="px-2 py-0.5 text-[11px] font-extrabold rounded-full bg-orange-500 text-white">인플레이션 대비</span>
+        </div>
+
+        <!-- 5. 몇 년마다 증액? -->
+        <div class="space-y-1.5">
+          <div class="flex justify-between items-center">
+            <label for="stepIntervalInput" class="text-xs sm:text-sm font-bold text-slate-800 flex items-center gap-1">
+              <span>⏱️ 5. 연금액 증액 주기 (몇 년마다?)</span>
+            </label>
+            <div class="flex items-center gap-1">
+              <input id="stepIntervalInput" type="number" min="1" max="30" step="1" value="5"
+                class="w-16 text-right font-extrabold text-sm text-orange-900 bg-white border border-orange-300 rounded-xl px-2 py-1 focus:outline-none focus:ring-2 focus:ring-orange-400">
+              <span class="text-xs font-bold text-slate-600">년마다</span>
+            </div>
+          </div>
+          <input id="stepIntervalSlider" type="range" min="1" max="15" step="1" value="5" class="w-full">
+          <div class="flex gap-1.5 pt-0.5">
+            <button type="button" onclick="setStepIntervalQuick(1)" class="px-2 py-1 text-[11px] font-bold rounded-lg bg-white hover:bg-orange-100 text-slate-700 border border-orange-200 transition">매년(1년)</button>
+            <button type="button" onclick="setStepIntervalQuick(3)" class="px-2 py-1 text-[11px] font-bold rounded-lg bg-white hover:bg-orange-100 text-slate-700 border border-orange-200 transition">3년마다</button>
+            <button type="button" onclick="setStepIntervalQuick(5)" class="px-2 py-1 text-[11px] font-bold rounded-lg bg-orange-200 text-orange-900 border border-orange-300 transition">5년마다</button>
+            <button type="button" onclick="setStepIntervalQuick(10)" class="px-2 py-1 text-[11px] font-bold rounded-lg bg-white hover:bg-orange-100 text-slate-700 border border-orange-200 transition">10년마다</button>
+          </div>
+        </div>
+
+        <!-- 6. 몇 %씩 증액? -->
+        <div class="space-y-1.5 pt-1 border-t border-orange-200/60">
+          <div class="flex justify-between items-center">
+            <label for="stepRateInput" class="text-xs sm:text-sm font-bold text-slate-800 flex items-center gap-1">
+              <span>📊 6. 주기별 연금액 증액률 (몇 %씩?)</span>
+            </label>
+            <div class="flex items-center gap-1">
+              <input id="stepRateInput" type="number" min="0" max="50" step="0.5" value="5.0"
+                class="w-16 text-right font-extrabold text-sm text-orange-900 bg-white border border-orange-300 rounded-xl px-2 py-1 focus:outline-none focus:ring-2 focus:ring-orange-400">
+              <span class="text-xs font-bold text-slate-600">%씩 증액</span>
+            </div>
+          </div>
+          <input id="stepRateSlider" type="range" min="0" max="20" step="0.5" value="5.0" class="w-full">
+          <div class="flex gap-1.5 pt-0.5">
+            <button type="button" onclick="setStepRateQuick(0)" class="px-2 py-1 text-[11px] font-bold rounded-lg bg-white hover:bg-orange-100 text-slate-700 border border-orange-200 transition">0% (동결)</button>
+            <button type="button" onclick="setStepRateQuick(3)" class="px-2 py-1 text-[11px] font-bold rounded-lg bg-white hover:bg-orange-100 text-slate-700 border border-orange-200 transition">3%씩</button>
+            <button type="button" onclick="setStepRateQuick(5)" class="px-2 py-1 text-[11px] font-bold rounded-lg bg-orange-200 text-orange-900 border border-orange-300 transition">5%씩</button>
+            <button type="button" onclick="setStepRateQuick(10)" class="px-2 py-1 text-[11px] font-bold rounded-lg bg-white hover:bg-orange-100 text-slate-700 border border-orange-200 transition">10%씩</button>
+          </div>
+        </div>
+
+        <!-- Advanced Formula Option: 복리 증액 vs 단리 증액, 연 단위 vs 월 단위 -->
+        <div class="pt-2 border-t border-orange-200/80 space-y-2 text-xs">
+          <div class="flex items-center justify-between">
+            <span class="font-bold text-slate-700">🧮 증액 계산 방식:</span>
+            <select id="stepFormulaSelect" onchange="runSimulation()" class="bg-white border border-orange-300 rounded-xl px-2.5 py-1 font-bold text-slate-800 focus:outline-none">
+              <option value="compound" selected>복리 증액 방식 (직전 수령액 대비 % 인상)</option>
+              <option value="simple">단리 증액 방식 (첫해 수령액의 %만큼 고정 추가)</option>
+            </select>
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="font-bold text-slate-700">🏦 수익 반영 주기:</span>
+            <select id="returnMethodSelect" onchange="runSimulation()" class="bg-white border border-orange-300 rounded-xl px-2.5 py-1 font-bold text-slate-800 focus:outline-none">
+              <option value="annual" selected>연 단위 정산 (연간 수령액 차감 후 연수익 반영)</option>
+              <option value="monthly">월 단위 정밀 복리 (매월 인출 후 월복리 운용)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RIGHT PANEL: KPI Summary, Goose Status, Chart & Table (7 cols on lg) -->
+    <section class="lg:col-span-7 space-y-6">
+
+      <!-- Dynamic Goose Status Banner -->
+      <div id="statusBanner" class="bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 text-white rounded-3xl p-5 sm:p-6 shadow-xl flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="flex items-center gap-4">
+          <div id="statusEmoji" class="text-4xl sm:text-5xl bg-white/20 backdrop-blur-sm w-16 h-16 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-inner">
+            🦢
+          </div>
+          <div>
+            <div id="statusBadge" class="inline-block px-2.5 py-0.5 rounded-full bg-white/25 text-xs font-extrabold mb-1">
+              시뮬레이션 진단 결과
+            </div>
+            <h2 id="statusHeadline" class="text-xl sm:text-2xl font-black tracking-tight">
+              87세(26년차)에 계좌가 모두 소진됩니다!
+            </h2>
+            <p id="statusSubtext" class="text-xs sm:text-sm text-amber-50 mt-0.5">
+              62세부터 86세까지 25년간 정상 수령 후, 87세(26년차)에 남은 잔액 558만원을 수령하며 마무리됩니다.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4 KPI Cards -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3.5">
+        <!-- Card 1: 계좌 고갈 연령 -->
+        <div class="bg-white rounded-2xl p-4 border-2 border-amber-200 shadow-md flex flex-col justify-between">
+          <div class="flex items-center justify-between text-xs font-bold text-slate-500">
+            <span>계좌 고갈 연령</span>
+            <span class="text-lg">⏳</span>
+          </div>
+          <div id="kpiDepleteAge" class="text-xl sm:text-2xl font-black text-rose-600 mt-2">
+            87세 소진
+          </div>
+          <div id="kpiDurationYears" class="text-xs font-bold text-slate-500 mt-1">
+            총 26년간 연금 수령
+          </div>
+        </div>
+
+        <!-- Card 2: 총 누적 수령액 -->
+        <div class="bg-white rounded-2xl p-4 border-2 border-emerald-200 shadow-md flex flex-col justify-between">
+          <div class="flex items-center justify-between text-xs font-bold text-slate-500">
+            <span>총 누적 수령액</span>
+            <span class="text-lg">🎁</span>
+          </div>
+          <div id="kpiTotalWithdrawn" class="text-xl sm:text-2xl font-black text-emerald-700 mt-2">
+            3억 4,776만
+          </div>
+          <div id="kpiWithdrawMultiple" class="text-xs font-bold text-emerald-600 mt-1">
+            원금 대비 1.74배 수령
+          </div>
+        </div>
+
+        <!-- Card 3: 총 투자 수익금 -->
+        <div class="bg-white rounded-2xl p-4 border-2 border-blue-200 shadow-md flex flex-col justify-between">
+          <div class="flex items-center justify-between text-xs font-bold text-slate-500">
+            <span>총 운용 수익금</span>
+            <span class="text-lg">🌱</span>
+          </div>
+          <div id="kpiTotalInterest" class="text-xl sm:text-2xl font-black text-blue-700 mt-2">
+            +1억 4,776만
+          </div>
+          <div id="kpiInterestDesc" class="text-xs font-bold text-slate-500 mt-1">
+            황금거위가 낳은 순수익
+          </div>
+        </div>
+
+        <!-- Card 4: 마지막 해 월 수령액 -->
+        <div class="bg-white rounded-2xl p-4 border-2 border-orange-200 shadow-md flex flex-col justify-between">
+          <div class="flex items-center justify-between text-xs font-bold text-slate-500">
+            <span>최종 월 수령액</span>
+            <span class="text-lg">🚀</span>
+          </div>
+          <div id="kpiFinalMonthly" class="text-xl sm:text-2xl font-black text-orange-600 mt-2">
+            121.9만원
+          </div>
+          <div id="kpiStepCount" class="text-xs font-bold text-orange-600 mt-1">
+            총 5회 증액 반영 완료
+          </div>
+        </div>
+      </div>
+
+      <!-- Chart Card -->
+      <div class="bg-white rounded-3xl p-5 sm:p-6 border-2 border-amber-200 shadow-xl space-y-3">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <h3 class="text-base sm:text-lg font-extrabold text-slate-800 flex items-center gap-1.5">
+              <span>📉</span> 연도별 계좌 잔액 추이 및 연간 연금 수령액
+            </h3>
+            <p class="text-xs text-slate-500">주황색 막대(🚀)는 연금액이 증액된 해를 나타냅니다.</p>
+          </div>
+          <div class="flex items-center gap-3 text-xs font-bold">
+            <span class="inline-flex items-center gap-1 text-amber-700">
+              <span class="w-3 h-3 rounded-full bg-amber-500 inline-block"></span> 연말 남은 금액
+            </span>
+            <span class="inline-flex items-center gap-1 text-emerald-700">
+              <span class="w-3 h-3 rounded bg-emerald-500 inline-block"></span> 연간 수령액
+            </span>
+            <span class="inline-flex items-center gap-1 text-orange-600">
+              <span class="w-3 h-3 rounded bg-orange-500 inline-block"></span> 증액 연도 🚀
+            </span>
+          </div>
+        </div>
+        <div class="relative h-72 sm:h-80 w-full">
+          <canvas id="pensionChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Detailed Yearly Simulation Table -->
+      <div class="bg-white rounded-3xl p-5 sm:p-6 border-2 border-amber-200 shadow-xl space-y-4">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h3 class="text-base sm:text-lg font-extrabold text-slate-800 flex items-center gap-1.5">
+              <span>📋</span> 연차별 · 연령별 연금 수령 상세 시뮬레이션 표
+            </h3>
+            <p class="text-xs text-slate-500">연초 잔액, 월 수령액, 연간 수령 합계, 연말 남은 금액과 증액 시점(🚀)을 한눈에 보여줍니다.</p>
+          </div>
+          <button onclick="downloadCSV()" class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow transition flex items-center gap-1.5">
+            <span>📥 CSV 파일 다운로드</span>
+          </button>
+        </div>
+
+        <div class="overflow-x-auto max-h-96 overflow-y-auto rounded-2xl border border-amber-200">
+          <table class="w-full text-xs sm:text-sm text-right border-collapse">
+            <thead class="bg-amber-100/90 text-amber-950 font-extrabold sticky top-0 z-10 shadow-sm">
+              <tr>
+                <th class="py-3 px-3 text-center">년차 (나이)</th>
+                <th class="py-3 px-3">연초 계좌잔액</th>
+                <th class="py-3 px-3">월 수령 연금</th>
+                <th class="py-3 px-3">연간 수령 합계</th>
+                <th class="py-3 px-3">연말 남은 금액</th>
+              </tr>
+            </thead>
+            <tbody id="simulationTableBody" class="divide-y divide-amber-100">
+              <!-- Populated by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <script>
+    // --- Global State ---
+    let withdrawalMode = 'amount'; // 'amount' (만원/월) or 'rate' (%/년)
+    let pensionChartInstance = null;
+    let latestSimulationRows = [];
+
+    // --- DOM Elements ---
+    const startAgeInput = document.getElementById('startAgeInput');
+    const startAgeSlider = document.getElementById('startAgeSlider');
+
+    const initialBalanceInput = document.getElementById('initialBalanceInput');
+    const initialBalanceSlider = document.getElementById('initialBalanceSlider');
+    const initialBalanceKorean = document.getElementById('initialBalanceKorean');
+
+    const monthlyWithdrawalInput = document.getElementById('monthlyWithdrawalInput');
+    const monthlyWithdrawalSlider = document.getElementById('monthlyWithdrawalSlider');
+
+    const annualWithdrawalRateInput = document.getElementById('annualWithdrawalRateInput');
+    const annualWithdrawalRateSlider = document.getElementById('annualWithdrawalRateSlider');
+
+    const annualReturnInput = document.getElementById('annualReturnInput');
+    const annualReturnSlider = document.getElementById('annualReturnSlider');
+
+    const stepIntervalInput = document.getElementById('stepIntervalInput');
+    const stepIntervalSlider = document.getElementById('stepIntervalSlider');
+
+    const stepRateInput = document.getElementById('stepRateInput');
+    const stepRateSlider = document.getElementById('stepRateSlider');
+
+    const stepFormulaSelect = document.getElementById('stepFormulaSelect');
+    const returnMethodSelect = document.getElementById('returnMethodSelect');
+
+    // --- Helper: Format Korean Currency (만원 unit to 억/만원) ---
+    function formatManwonToKorean(manwon, includeWon = false) {
+      const rounded = Math.round(manwon);
+      if (rounded <= 0) return '0만원';
+      const eok = Math.floor(rounded / 10000);
+      const remMan = rounded % 10000;
+      let result = '';
+      if (eok > 0) {
+        result += `${eok.toLocaleString()}억`;
+        if (remMan > 0) {
+          result += ` ${remMan.toLocaleString()}만원`;
+        } else {
+          result += ' 원';
+        }
+      } else {
+        result += `${remMan.toLocaleString()}만원`;
+      }
+      if (includeWon) {
+        const totalWon = Math.round(manwon * 10000);
+        result += ` (${totalWon.toLocaleString()}원)`;
+      }
+      return result;
+    }
+
+    function formatManwonNumber(val, decimals = 1) {
+      if (Math.abs(val - Math.round(val)) < 0.05) {
+        return Math.round(val).toLocaleString();
+      }
+      return val.toLocaleString(undefined, {
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals
+      });
+    }
+
+    // --- Toggle between Monthly Amount (만원) and Annual Rate (%) ---
+    function setWithdrawalMode(mode) {
+      withdrawalMode = mode;
+      const amountBox = document.getElementById('withdrawalAmountBox');
+      const rateBox = document.getElementById('withdrawalRateBox');
+      const amountBtn = document.getElementById('modeAmountBtn');
+      const rateBtn = document.getElementById('modeRateBtn');
+
+      if (mode === 'amount') {
+        amountBox.classList.remove('hidden');
+        rateBox.classList.add('hidden');
+        amountBtn.className = 'px-2.5 py-1 rounded-lg bg-emerald-600 text-white transition';
+        rateBtn.className = 'px-2.5 py-1 rounded-lg text-slate-600 hover:text-emerald-800 transition';
+      } else {
+        amountBox.classList.add('hidden');
+        rateBox.classList.remove('hidden');
+        rateBtn.className = 'px-2.5 py-1 rounded-lg bg-emerald-600 text-white transition';
+        amountBtn.className = 'px-2.5 py-1 rounded-lg text-slate-600 hover:text-emerald-800 transition';
+      }
+    }
+
+    // --- Sync Input Pairs ---
+    function bindInputAndSlider(inputEl, sliderEl, onUpdate) {
+      inputEl.addEventListener('input', () => {
+        sliderEl.value = inputEl.value;
+        onUpdate();
+      });
+      sliderEl.addEventListener('input', () => {
+        inputEl.value = sliderEl.value;
+        onUpdate();
+      });
+    }
+
+    bindInputAndSlider(startAgeInput, startAgeSlider, runSimulation);
+
+    bindInputAndSlider(initialBalanceInput, initialBalanceSlider, () => {
+      const balance = parseFloat(initialBalanceInput.value) || 0;
+      if (withdrawalMode === 'rate') {
+        const rate = parseFloat(annualWithdrawalRateInput.value) || 0;
+        const monthly = (balance * (rate / 100)) / 12;
+        monthlyWithdrawalInput.value = Math.round(monthly * 10) / 10;
+        monthlyWithdrawalSlider.value = monthlyWithdrawalInput.value;
+      } else {
+        const monthly = parseFloat(monthlyWithdrawalInput.value) || 0;
+        const rate = balance > 0 ? ((monthly * 12) / balance) * 100 : 0;
+        annualWithdrawalRateInput.value = rate.toFixed(2);
+        annualWithdrawalRateSlider.value = rate.toFixed(2);
+      }
+      runSimulation();
+    });
+
+    bindInputAndSlider(monthlyWithdrawalInput, monthlyWithdrawalSlider, () => {
+      const balance = parseFloat(initialBalanceInput.value) || 1;
+      const monthly = parseFloat(monthlyWithdrawalInput.value) || 0;
+      const rate = ((monthly * 12) / balance) * 100;
+      annualWithdrawalRateInput.value = rate.toFixed(2);
+      annualWithdrawalRateSlider.value = rate.toFixed(2);
+      runSimulation();
+    });
+
+    bindInputAndSlider(annualWithdrawalRateInput, annualWithdrawalRateSlider, () => {
+      const balance = parseFloat(initialBalanceInput.value) || 0;
+      const rate = parseFloat(annualWithdrawalRateInput.value) || 0;
+      const monthly = (balance * (rate / 100)) / 12;
+      monthlyWithdrawalInput.value = Math.round(monthly * 10) / 10;
+      monthlyWithdrawalSlider.value = monthlyWithdrawalInput.value;
+      runSimulation();
+    });
+
+    bindInputAndSlider(annualReturnInput, annualReturnSlider, runSimulation);
+    bindInputAndSlider(stepIntervalInput, stepIntervalSlider, runSimulation);
+    bindInputAndSlider(stepRateInput, stepRateSlider, runSimulation);
+
+    // --- Quick Preset Setters ---
+    function setBalanceQuick(val) {
+      initialBalanceInput.value = val;
+      initialBalanceSlider.value = val;
+      if (withdrawalMode === 'rate') {
+        const rate = parseFloat(annualWithdrawalRateInput.value) || 0;
+        const monthly = (val * (rate / 100)) / 12;
+        monthlyWithdrawalInput.value = Math.round(monthly * 10) / 10;
+        monthlyWithdrawalSlider.value = monthlyWithdrawalInput.value;
+      } else {
+        const monthly = parseFloat(monthlyWithdrawalInput.value) || 0;
+        const rate = val > 0 ? ((monthly * 12) / val) * 100 : 0;
+        annualWithdrawalRateInput.value = rate.toFixed(2);
+        annualWithdrawalRateSlider.value = rate.toFixed(2);
+      }
+      runSimulation();
+    }
+
+    function setStepIntervalQuick(years) {
+      stepIntervalInput.value = years;
+      stepIntervalSlider.value = years;
+      runSimulation();
+    }
+
+    function setStepRateQuick(pct) {
+      stepRateInput.value = pct;
+      stepRateSlider.value = pct;
+      runSimulation();
+    }
+
+    function applyPreset(presetName) {
+      if (presetName === 'safe') {
+        // 🐢 안전형 (4% 룰): 60세 개시, 3억 원, 연 4.0% 인출(월 100만원), 연 수익률 5.0%, 3년마다 3.0% 복리 증액
+        startAgeInput.value = 60;
+        startAgeSlider.value = 60;
+        initialBalanceInput.value = 30000;
+        initialBalanceSlider.value = 30000;
+        monthlyWithdrawalInput.value = 100;
+        monthlyWithdrawalSlider.value = 100;
+        annualWithdrawalRateInput.value = 4.0;
+        annualWithdrawalRateSlider.value = 4.0;
+        annualReturnInput.value = 5.0;
+        annualReturnSlider.value = 5.0;
+        stepIntervalInput.value = 3;
+        stepIntervalSlider.value = 3;
+        stepRateInput.value = 3.0;
+        stepRateSlider.value = 3.0;
+        stepFormulaSelect.value = 'compound';
+        returnMethodSelect.value = 'annual';
+      } else if (presetName === 'balanced') {
+        // 🦢 균형형 (기본): 60세 개시, 3억 원, 월 125만원(연 5.0%), 연 수익률 5.0%, 5년마다 5.0% 복리 증액
+        startAgeInput.value = 60;
+        startAgeSlider.value = 60;
+        initialBalanceInput.value = 30000;
+        initialBalanceSlider.value = 30000;
+        monthlyWithdrawalInput.value = 125;
+        monthlyWithdrawalSlider.value = 125;
+        annualWithdrawalRateInput.value = 5.0;
+        annualWithdrawalRateSlider.value = 5.0;
+        annualReturnInput.value = 5.0;
+        annualReturnSlider.value = 5.0;
+        stepIntervalInput.value = 5;
+        stepIntervalSlider.value = 5;
+        stepRateInput.value = 5.0;
+        stepRateSlider.value = 5.0;
+        stepFormulaSelect.value = 'compound';
+        returnMethodSelect.value = 'annual';
+      } else if (presetName === 'active') {
+        // 🦅 적극 인출형: 60세 개시, 3억 원, 월 175만원(연 7.0%), 연 수익률 6.0%, 5년마다 5.0% 복리 증액
+        startAgeInput.value = 60;
+        startAgeSlider.value = 60;
+        initialBalanceInput.value = 30000;
+        initialBalanceSlider.value = 30000;
+        monthlyWithdrawalInput.value = 175;
+        monthlyWithdrawalSlider.value = 175;
+        annualWithdrawalRateInput.value = 7.0;
+        annualWithdrawalRateSlider.value = 7.0;
+        annualReturnInput.value = 6.0;
+        annualReturnSlider.value = 6.0;
+        stepIntervalInput.value = 5;
+        stepIntervalSlider.value = 5;
+        stepRateInput.value = 5.0;
+        stepRateSlider.value = 5.0;
+        stepFormulaSelect.value = 'compound';
+        returnMethodSelect.value = 'annual';
+      }
+      runSimulation();
+    }
+
+    // --- Core Simulation Logic ---
+    function runSimulation() {
+      const startAge = Math.max(1, parseInt(startAgeInput.value, 10) || 60);
+      const initialBalance = Math.max(0, parseFloat(initialBalanceInput.value) || 30000);
+      const baseMonthly = Math.max(0, parseFloat(monthlyWithdrawalInput.value) || 125);
+      const annualReturnPct = Math.max(0, parseFloat(annualReturnInput.value) || 0);
+      const r = annualReturnPct / 100;
+
+      const stepInterval = Math.max(1, parseInt(stepIntervalInput.value, 10) || 5);
+      const stepRatePct = Math.max(0, parseFloat(stepRateInput.value) || 0);
+      const g = stepRatePct / 100;
+
+      const stepFormula = stepFormulaSelect.value; // 'compound' or 'simple'
+      const returnMethod = returnMethodSelect.value; // 'annual' or 'monthly'
+
+      // Update Helper Texts
+      initialBalanceKorean.textContent = formatManwonToKorean(initialBalance, true);
+      const firstYearAnnual = baseMonthly * 12;
+      const firstYearRate = initialBalance > 0 ? (firstYearAnnual / initialBalance) * 100 : 0;
+      document.getElementById('firstYearAnnualText').textContent = `${formatManwonNumber(firstYearAnnual, 1)}만원`;
+      document.getElementById('firstYearRateText').textContent = `연 ${firstYearRate.toFixed(2)}% (월 ${(firstYearRate / 12).toFixed(2)}%)`;
+
+      const maxYears = 60; // Simulate up to 60 years
+      const rows = [];
+      let currentStartBalance = initialBalance;
+      let totalWithdrawn = 0;
+      let depletedYearIndex = null; // 1-based year index when depleted
+      let depletedAge = null;
+      let stepUpCount = 0;
+
+      for (let yearIdx = 1; yearIdx <= maxYears; yearIdx++) {
+        const age = startAge + yearIdx - 1;
+        const numStepUps = Math.floor((yearIdx - 1) / stepInterval);
+        const isStepUpYear = yearIdx > 1 && ((yearIdx - 1) % stepInterval === 0) && g > 0;
+        if (isStepUpYear) stepUpCount++;
+
+        let plannedMonthly = baseMonthly;
+        if (stepFormula === 'simple') {
+          // 단리 증액: 첫해 월 수령액 * (1 + g * numStepUps)
+          plannedMonthly = baseMonthly * (1 + g * numStepUps);
+        } else {
+          // 복리 증액: 첫해 월 수령액 * (1 + g)^numStepUps
+          plannedMonthly = baseMonthly * Math.pow(1 + g, numStepUps);
+        }
+
+        const plannedAnnual = plannedMonthly * 12;
+        let actualAnnualWithdrawal = 0;
+        let endingBalance = 0;
+
+        if (returnMethod === 'annual') {
+          // 연 단위 정산 방식:
+          // 연초잔액(currentStartBalance)에서 연간수령액(plannedAnnual)을 빼서 연말잔액 산출
+          // 다음 해 연초잔액 = 이전 연말잔액 * (1 + r)
+          if (currentStartBalance <= plannedAnnual) {
+            actualAnnualWithdrawal = currentStartBalance;
+            endingBalance = 0;
+            depletedYearIndex = yearIdx;
+            depletedAge = age;
+          } else {
+            actualAnnualWithdrawal = plannedAnnual;
+            endingBalance = currentStartBalance - plannedAnnual;
+          }
+          totalWithdrawn += actualAnnualWithdrawal;
+
+          rows.push({
+            yearIdx,
+            age,
+            startBalance: currentStartBalance,
+            monthlyWithdrawal: plannedMonthly,
+            actualAnnualWithdrawal,
+            endingBalance,
+            isStepUpYear,
+            numStepUps,
+            isDepletedRow: endingBalance === 0
+          });
+
+          if (endingBalance <= 0) break;
+          currentStartBalance = endingBalance * (1 + r);
+
+        } else {
+          // 월 단위 정밀 복리 방식
+          let monthlyBal = currentStartBalance;
+          const monthlyRate = r / 12;
+          let yearSumWithdrawn = 0;
+          let depletedThisYear = false;
+
+          for (let m = 1; m <= 12; m++) {
+            if (monthlyBal <= plannedMonthly) {
+              yearSumWithdrawn += monthlyBal;
+              monthlyBal = 0;
+              depletedThisYear = true;
+              break;
+            } else {
+              monthlyBal -= plannedMonthly;
+              yearSumWithdrawn += plannedMonthly;
+              monthlyBal *= (1 + monthlyRate);
+            }
+          }
+
+          actualAnnualWithdrawal = yearSumWithdrawn;
+          endingBalance = monthlyBal;
+          totalWithdrawn += actualAnnualWithdrawal;
+
+          if (depletedThisYear) {
+            depletedYearIndex = yearIdx;
+            depletedAge = age;
+          }
+
+          rows.push({
+            yearIdx,
+            age,
+            startBalance: currentStartBalance,
+            monthlyWithdrawal: plannedMonthly,
+            actualAnnualWithdrawal,
+            endingBalance,
+            isStepUpYear,
+            numStepUps,
+            isDepletedRow: depletedThisYear
+          });
+
+          if (depletedThisYear) break;
+          currentStartBalance = endingBalance;
+        }
+      }
+
+      latestSimulationRows = rows;
+      updateDashboardUI(rows, {
+        startAge,
+        initialBalance,
+        totalWithdrawn,
+        depletedYearIndex,
+        depletedAge,
+        stepInterval,
+        stepRatePct
+      });
+    }
+
+    // --- Update KPIs, Banner, Chart & Table ---
+    function updateDashboardUI(rows, summary) {
+      const lastRow = rows[rows.length - 1];
+      const finalEndingBalance = lastRow ? lastRow.endingBalance : 0;
+      const totalProfit = Math.max(0, summary.totalWithdrawn + finalEndingBalance - summary.initialBalance);
+      const multiple = summary.initialBalance > 0
+        ? (summary.totalWithdrawn / summary.initialBalance).toFixed(2)
+        : '0.00';
+
+      const statusBanner = document.getElementById('statusBanner');
+      const statusEmoji = document.getElementById('statusEmoji');
+      const statusHeadline = document.getElementById('statusHeadline');
+      const statusSubtext = document.getElementById('statusSubtext');
+
+      if (summary.depletedAge !== null) {
+        statusBanner.className = 'bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500 text-white rounded-3xl p-5 sm:p-6 shadow-xl flex flex-col sm:flex-row items-center justify-between gap-4';
+        statusEmoji.textContent = summary.depletedAge >= 85 ? '🦢' : '🐥';
+        statusHeadline.textContent = `${summary.depletedAge}세 (${summary.depletedYearIndex}년차)에 계좌가 0원이 됩니다!`;
+        statusSubtext.textContent = `${summary.startAge}세에 시작해 총 ${summary.depletedYearIndex}년간 누적 ${formatManwonToKorean(summary.totalWithdrawn)}을 수령하고 계좌가 모두 소진됩니다.`;
+
+        document.getElementById('kpiDepleteAge').textContent = `${summary.depletedAge}세 소진`;
+        document.getElementById('kpiDepleteAge').className = 'text-xl sm:text-2xl font-black text-rose-600 mt-2';
+        document.getElementById('kpiDurationYears').textContent = `총 ${summary.depletedYearIndex}년간 연금 수령`;
+      } else {
+        statusBanner.className = 'bg-gradient-to-r from-emerald-600 via-teal-600 to-amber-500 text-white rounded-3xl p-5 sm:p-6 shadow-xl flex flex-col sm:flex-row items-center justify-between gap-4';
+        statusEmoji.textContent = '👑';
+        statusHeadline.textContent = `60년(${lastRow.age}세) 이후에도 고갈되지 않는 화수분 계좌입니다!`;
+        statusSubtext.textContent = `운용 수익이 인출액을 뒷받침하여 ${lastRow.age}세에도 연말 잔액 ${formatManwonToKorean(finalEndingBalance)}이 남습니다.`;
+
+        document.getElementById('kpiDepleteAge').textContent = `영구 유지 👑`;
+        document.getElementById('kpiDepleteAge').className = 'text-xl sm:text-2xl font-black text-emerald-600 mt-2';
+        document.getElementById('kpiDurationYears').textContent = `60년 이상 (${lastRow.age}세+) 지속`;
+      }
+
+      // KPI 2: 총 누적 수령액
+      document.getElementById('kpiTotalWithdrawn').textContent = formatManwonToKorean(summary.totalWithdrawn);
+      document.getElementById('kpiWithdrawMultiple').textContent = `시작 원금 대비 ${multiple}배 수령`;
+
+      // KPI 3: 총 운용 수익금
+      document.getElementById('kpiTotalInterest').textContent = `+${formatManwonToKorean(totalProfit)}`;
+
+      // KPI 4: 최종 월 수령액
+      const finalMonthly = lastRow ? lastRow.monthlyWithdrawal : 0;
+      const totalStepUps = lastRow ? lastRow.numStepUps : 0;
+      document.getElementById('kpiFinalMonthly').textContent = `${formatManwonNumber(finalMonthly, 1)}만원`;
+      document.getElementById('kpiStepCount').textContent = summary.stepRatePct > 0
+        ? `총 ${totalStepUps}회 증액 (${summary.stepInterval}년 주기)`
+        : `증액 없음 (고정 수령)`;
+
+      // Render Chart & Table
+      renderChart(rows);
+      renderTable(rows);
+    }
+
+    // --- Chart.js Rendering ---
+    function renderChart(rows) {
+      const ctx = document.getElementById('pensionChart').getContext('2d');
+      const labels = rows.map(r => `${r.age}세(${r.yearIdx}년차)`);
+      const endingBalances = rows.map(r => Math.round(r.endingBalance));
+      const annualWithdrawals = rows.map(r => Math.round(r.actualAnnualWithdrawal));
+      const barColors = rows.map(r => r.isStepUpYear ? 'rgba(249, 115, 22, 0.85)' : 'rgba(16, 185, 129, 0.75)');
+
+      if (pensionChartInstance) {
+        pensionChartInstance.destroy();
+      }
+
+      pensionChartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels,
+          datasets: [
+            {
+              type: 'line',
+              label: '연말 남은 계좌 금액 (만원)',
+              data: endingBalances,
+              borderColor: '#f59e0b',
+              backgroundColor: 'rgba(245, 158, 11, 0.16)',
+              borderWidth: 3,
+              pointRadius: 3,
+              pointBackgroundColor: '#d97706',
+              fill: true,
+              tension: 0.25,
+              yAxisID: 'y'
+            },
+            {
+              type: 'bar',
+              label: '연간 수령 연금 (만원)',
+              data: annualWithdrawals,
+              backgroundColor: barColors,
+              borderRadius: 6,
+              yAxisID: 'y'
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: {
+            mode: 'index',
+            intersect: false
+          },
+          plugins: {
+            legend: {
+              display: false
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  const val = context.parsed.y || 0;
+                  return `${context.dataset.label}: ${val.toLocaleString()}만원`;
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              ticks: {
+                maxTicksLimit: 12,
+                font: { size: 11 }
+              },
+              grid: { display: false }
+            },
+            y: {
+              beginAtZero: true,
+              ticks: {
+                callback: function(value) {
+                  return value.toLocaleString() + '만';
+                },
+                font: { size: 11 }
+              },
+              grid: {
+                color: 'rgba(251, 191, 36, 0.2)'
+              }
+            }
+          }
+        }
+      });
+    }
+
+    // --- Render Yearly Table ---
+    function renderTable(rows) {
+      const tbody = document.getElementById('simulationTableBody');
+      tbody.innerHTML = rows.map(r => {
+        const rowBg = r.isDepletedRow
+          ? 'bg-rose-50/90 font-bold text-rose-900'
+          : (r.isStepUpYear ? 'bg-orange-50/70' : 'hover:bg-amber-50/50');
+
+        const stepBadge = r.isStepUpYear
+          ? `<span class="inline-flex items-center px-1.5 py-0.5 ml-1 text-[10px] font-extrabold rounded-full bg-orange-500 text-white">🚀 증액</span>`
+          : '';
+
+        const depletedBadge = r.isDepletedRow
+          ? `<span class="inline-flex items-center px-1.5 py-0.5 ml-1 text-[10px] font-extrabold rounded-full bg-rose-600 text-white">⏳ 소진</span>`
+          : '';
+
+        return `
+          <tr class="${rowBg} transition">
+            <td class="py-2.5 px-3 text-center font-bold text-slate-700">
+              ${r.yearIdx}년차 <span class="text-slate-500 font-normal">(${r.age}세)</span>
+            </td>
+            <td class="py-2.5 px-3 font-medium text-slate-700">
+              ${formatManwonNumber(r.startBalance, 1)}만원
+            </td>
+            <td class="py-2.5 px-3 font-bold text-emerald-700">
+              ${formatManwonNumber(r.monthlyWithdrawal, 2)}만원 ${stepBadge}
+            </td>
+            <td class="py-2.5 px-3 font-semibold text-slate-800">
+              ${formatManwonNumber(r.actualAnnualWithdrawal, 1)}만원
+            </td>
+            <td class="py-2.5 px-3 font-extrabold ${r.endingBalance <= 0 ? 'text-rose-600' : 'text-amber-900'}">
+              ${formatManwonNumber(r.endingBalance, 1)}만원 ${depletedBadge}
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // --- Export CSV (Excel Compatible UTF-8 BOM) ---
+    function downloadCSV() {
+      if (!latestSimulationRows.length) return;
+      const headers = ['년차', '연령(세)', '연초 계좌잔액(만원)', '월 수령 연금(만원)', '연간 수령 합계(만원)', '연말 남은 금액(만원)', '증액 여부'];
+      const csvRows = [headers.join(',')];
+
+      latestSimulationRows.forEach(r => {
+        csvRows.push([
+          `${r.yearIdx}년차`,
+          `${r.age}세`,
+          r.startBalance.toFixed(2),
+          r.monthlyWithdrawal.toFixed(2),
+          r.actualAnnualWithdrawal.toFixed(2),
+          r.endingBalance.toFixed(2),
+          r.isStepUpYear ? '증액연도' : ''
+        ].join(','));
+      });
+
+      const csvContent = '\uFEFF' + csvRows.join('\n');
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `황금거위_연금수령_시뮬레이션_${new Date().toISOString().slice(0, 10)}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    // Initialize on load
+    window.onload = function() {
+      runSimulation();
+    };
+  </script>
+</body>
+</html>
